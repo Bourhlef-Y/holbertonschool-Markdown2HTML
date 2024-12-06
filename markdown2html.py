@@ -81,33 +81,39 @@ def convert_paragraphs(markdown_text):
     current_paragraph = []
 
     for line in markdown_text.split('\n'):
-        if line.strip() == '':
+        # Si la ligne contient des balises HTML, l'ajouter directement
+        if line.strip().startswith('<') and line.strip().endswith('>'):
             if current_paragraph:
-                # Joindre les lignes du paragraphe avec <br/> si nécessaire
-                paragraph_content = []
-                for i, p_line in enumerate(current_paragraph):
-                    paragraph_content.append(p_line.strip())
-                    # Pas de <br/> pour la dernière ligne
-                    if i < len(current_paragraph) - 1:
-                        paragraph_content.append('<br/>')
-
+                # Terminer le paragraphe en cours s'il existe
                 html_lines.append('<p>')
-                html_lines.append('\n'.join(paragraph_content))
+                for i, p_line in enumerate(current_paragraph):
+                    html_lines.append(p_line)
+                    if i < len(current_paragraph) - 1:
+                        html_lines.append('<br/>')
+                html_lines.append('</p>')
+                current_paragraph = []
+            html_lines.append(line)
+        elif line.strip() == '':
+            if current_paragraph:
+                # Terminer le paragraphe en cours
+                html_lines.append('<p>')
+                for i, p_line in enumerate(current_paragraph):
+                    html_lines.append(p_line)
+                    if i < len(current_paragraph) - 1:
+                        html_lines.append('<br/>')
                 html_lines.append('</p>')
                 current_paragraph = []
         else:
-            current_paragraph.append(line)
+            # Ajouter la ligne au paragraphe en cours
+            current_paragraph.append(line.strip())
 
     # Gérer le dernier paragraphe s'il existe
     if current_paragraph:
-        paragraph_content = []
-        for i, p_line in enumerate(current_paragraph):
-            paragraph_content.append(p_line.strip())
-            if i < len(current_paragraph) - 1:
-                paragraph_content.append('<br/>')
-
         html_lines.append('<p>')
-        html_lines.append('\n'.join(paragraph_content))
+        for i, p_line in enumerate(current_paragraph):
+            html_lines.append(p_line)
+            if i < len(current_paragraph) - 1:
+                html_lines.append('<br/>')
         html_lines.append('</p>')
 
     return '\n'.join(html_lines)
