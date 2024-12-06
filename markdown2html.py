@@ -1,5 +1,8 @@
 #!/usr/bin/python3
-"""Start script"""
+"""
+Module that converts Markdown to HTML.
+Usage: ./markdown2html.py README.md README.html
+"""
 
 import sys
 import os
