@@ -10,12 +10,12 @@ def convert_bold_emphasis(text):
     while '**' in text:
         text = text.replace('**', '<b>', 1)
         text = text.replace('**', '</b>', 1)
-    
+
     # Convertir les __text__ en <em>text</em>
     while '__' in text:
         text = text.replace('__', '<em>', 1)
         text = text.replace('__', '</em>', 1)
-    
+
     return text
 
 
@@ -33,7 +33,7 @@ def convert_headings(markdown_text):
 
         if 0 < heading_lvl <= 6:
             content = line[heading_lvl:].strip()
-            content = convert_bold_emphasis(content)  # Convertir le gras/italique
+            content = convert_bold_emphasis(content)
             html_lines.append(f'<h{heading_lvl}>{content}</h{heading_lvl}>')
         else:
             html_lines.append(line)
@@ -53,7 +53,7 @@ def convert_unordered_lists(markdown_text):
                 html_lines.append('<ul>')
                 in_list = True
             content = stripped_line[2:].strip()
-            content = convert_bold_emphasis(content)  # Convertir le gras/italique
+            content = convert_bold_emphasis(content)
             html_lines.append(f'<li>{content}</li>')
         else:
             if in_list:
@@ -79,7 +79,7 @@ def convert_ordered_lists(markdown_text):
                 html_lines.append('<ol>')
                 in_list = True
             content = stripped_line[2:].strip()
-            content = convert_bold_emphasis(content)  # Convertir le gras/italique
+            content = convert_bold_emphasis(content)
             html_lines.append(f'<li>{content}</li>')
         else:
             if in_list:
@@ -103,7 +103,7 @@ def convert_paragraphs(markdown_text):
             if current_paragraph:
                 html_lines.append('<p>')
                 for i, p_line in enumerate(current_paragraph):
-                    p_line = convert_bold_emphasis(p_line)  # Convertir le gras/italique
+                    p_line = convert_bold_emphasis(p_line)
                     html_lines.append(p_line)
                     if i < len(current_paragraph) - 1:
                         html_lines.append('<br/>')
@@ -114,7 +114,7 @@ def convert_paragraphs(markdown_text):
             if current_paragraph:
                 html_lines.append('<p>')
                 for i, p_line in enumerate(current_paragraph):
-                    p_line = convert_bold_emphasis(p_line)  # Convertir le gras/italique
+                    p_line = convert_bold_emphasis(p_line)
                     html_lines.append(p_line)
                     if i < len(current_paragraph) - 1:
                         html_lines.append('<br/>')
@@ -126,7 +126,7 @@ def convert_paragraphs(markdown_text):
     if current_paragraph:
         html_lines.append('<p>')
         for i, p_line in enumerate(current_paragraph):
-            p_line = convert_bold_emphasis(p_line)  # Convertir le gras/italique
+            p_line = convert_bold_emphasis(p_line)
             html_lines.append(p_line)
             if i < len(current_paragraph) - 1:
                 html_lines.append('<br/>')
