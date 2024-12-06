@@ -1,27 +1,35 @@
-#!/usr/bin/env python3
-"""
-Script qui convertit un fichier Markdown en HTML
-"""
+#!/usr/bin/python3
+"""Start script"""
+
 import sys
 import os
 
-def main():
-    # Vérifier le nombre d'arguments
+def convert_headings(markdown_text):
+    """Placeholder for future heading conversion"""
+    return markdown_text
+
+if __name__ == "__main__":
     if len(sys.argv) < 3:
         sys.stderr.write("Usage: ./markdown2html.py README.md README.html\n")
         sys.exit(1)
     
-    # Récupérer les noms de fichiers des arguments
     markdown_file = sys.argv[1]
     output_file = sys.argv[2]
     
-    # Vérifier si le fichier Markdown existe
     if not os.path.exists(markdown_file):
         sys.stderr.write(f"Missing {markdown_file}\n")
         sys.exit(1)
     
-    # Si tout va bien, sortir avec le code 0
-    sys.exit(0)
-
-if __name__ == "__main__":
-    main() 
+    try:
+        with open(markdown_file, 'r') as f:
+            markdown_content = f.read()
+        
+        html_content = convert_headings(markdown_content)
+        
+        with open(output_file, 'w') as f:
+            f.write(html_content)
+            
+        sys.exit(0)
+    except Exception as e:
+        sys.stderr.write(f"Error: {str(e)}\n")
+        sys.exit(1)
