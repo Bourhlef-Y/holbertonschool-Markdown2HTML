@@ -2,6 +2,7 @@
 """Convert Markdown files to HTML format."""
 import sys
 import os
+import hashlib
 
 
 def convert_bold_emphasis(text):
@@ -93,6 +94,29 @@ def convert_ordered_lists(markdown_text):
     return '\n'.join(html_lines)
 
 
+def convert_special_syntax(text):
+    """Convert special markdown syntax to HTML format."""
+    # Conversion MD5 pour [[text]]
+    while '[[' in text and ']]' in text:
+        start = text.find('[[')
+        end = text.find(']]')
+        if start != -1 and end != -1:
+            content = text[start + 2:end]
+            md5_hash = hashlib.md5(content.encode()).hexdigest()
+            text = text[:start] + md5_hash + text[end + 2:]
+
+    # Suppression des 'c' pour ((text))
+    while '((' in text and '))' in text:
+        start = text.find('((')
+        end = text.find('))')
+        if start != -1 and end != -1:
+            content = text[start + 2:end]
+            no_c = content.replace('c', '').replace('C', '')
+            text = text[:start] + no_c + text[end + 2:]
+
+    return text
+
+
 def convert_paragraphs(markdown_text):
     """Convert markdown paragraphs to HTML format."""
     html_lines = []
@@ -104,6 +128,7 @@ def convert_paragraphs(markdown_text):
                 html_lines.append('<p>')
                 for i, p_line in enumerate(current_paragraph):
                     p_line = convert_bold_emphasis(p_line)
+                    p_line = convert_special_syntax(p_line)
                     html_lines.append(p_line)
                     if i < len(current_paragraph) - 1:
                         html_lines.append('<br/>')
@@ -115,6 +140,7 @@ def convert_paragraphs(markdown_text):
                 html_lines.append('<p>')
                 for i, p_line in enumerate(current_paragraph):
                     p_line = convert_bold_emphasis(p_line)
+                    p_line = convert_special_syntax(p_line)
                     html_lines.append(p_line)
                     if i < len(current_paragraph) - 1:
                         html_lines.append('<br/>')
@@ -127,6 +153,7 @@ def convert_paragraphs(markdown_text):
         html_lines.append('<p>')
         for i, p_line in enumerate(current_paragraph):
             p_line = convert_bold_emphasis(p_line)
+            p_line = convert_special_syntax(p_line)
             html_lines.append(p_line)
             if i < len(current_paragraph) - 1:
                 html_lines.append('<br/>')
