@@ -75,6 +75,44 @@ def convert_ordered_lists(markdown_text):
     return '\n'.join(html_lines)
 
 
+def convert_paragraphs(markdown_text):
+    """Convert markdown paragraphs to HTML format."""
+    html_lines = []
+    current_paragraph = []
+
+    for line in markdown_text.split('\n'):
+        if line.strip() == '':
+            if current_paragraph:
+                # Joindre les lignes du paragraphe avec <br/> si nécessaire
+                paragraph_content = []
+                for i, p_line in enumerate(current_paragraph):
+                    paragraph_content.append(p_line.strip())
+                    # Pas de <br/> pour la dernière ligne
+                    if i < len(current_paragraph) - 1:
+                        paragraph_content.append('<br/>')
+
+                html_lines.append('<p>')
+                html_lines.append('\n'.join(paragraph_content))
+                html_lines.append('</p>')
+                current_paragraph = []
+        else:
+            current_paragraph.append(line)
+
+    # Gérer le dernier paragraphe s'il existe
+    if current_paragraph:
+        paragraph_content = []
+        for i, p_line in enumerate(current_paragraph):
+            paragraph_content.append(p_line.strip())
+            if i < len(current_paragraph) - 1:
+                paragraph_content.append('<br/>')
+
+        html_lines.append('<p>')
+        html_lines.append('\n'.join(paragraph_content))
+        html_lines.append('</p>')
+
+    return '\n'.join(html_lines)
+
+
 if __name__ == '__main__':
     if len(sys.argv) < 3:
         sys.stderr.write('Usage: ./markdown2html.py README.md README.html\n')
@@ -94,6 +132,7 @@ if __name__ == '__main__':
         html_content = convert_headings(markdown_content)
         html_content = convert_unordered_lists(html_content)
         html_content = convert_ordered_lists(html_content)
+        html_content = convert_paragraphs(html_content)
 
         with open(output_file, 'w') as f:
             f.write(html_content)
