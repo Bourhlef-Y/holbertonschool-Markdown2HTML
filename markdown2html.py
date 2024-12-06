@@ -4,6 +4,21 @@ import sys
 import os
 
 
+def convert_bold_emphasis(text):
+    """Convert markdown bold and emphasis syntax to HTML format."""
+    # Convertir les **text** en <b>text</b>
+    while '**' in text:
+        text = text.replace('**', '<b>', 1)
+        text = text.replace('**', '</b>', 1)
+    
+    # Convertir les __text__ en <em>text</em>
+    while '__' in text:
+        text = text.replace('__', '<em>', 1)
+        text = text.replace('__', '</em>', 1)
+    
+    return text
+
+
 def convert_headings(markdown_text):
     """Convert markdown headings to HTML format."""
     html_lines = []
@@ -18,6 +33,7 @@ def convert_headings(markdown_text):
 
         if 0 < heading_lvl <= 6:
             content = line[heading_lvl:].strip()
+            content = convert_bold_emphasis(content)  # Convertir le gras/italique
             html_lines.append(f'<h{heading_lvl}>{content}</h{heading_lvl}>')
         else:
             html_lines.append(line)
@@ -37,6 +53,7 @@ def convert_unordered_lists(markdown_text):
                 html_lines.append('<ul>')
                 in_list = True
             content = stripped_line[2:].strip()
+            content = convert_bold_emphasis(content)  # Convertir le gras/italique
             html_lines.append(f'<li>{content}</li>')
         else:
             if in_list:
@@ -62,6 +79,7 @@ def convert_ordered_lists(markdown_text):
                 html_lines.append('<ol>')
                 in_list = True
             content = stripped_line[2:].strip()
+            content = convert_bold_emphasis(content)  # Convertir le gras/italique
             html_lines.append(f'<li>{content}</li>')
         else:
             if in_list:
@@ -81,12 +99,11 @@ def convert_paragraphs(markdown_text):
     current_paragraph = []
 
     for line in markdown_text.split('\n'):
-        # Si la ligne contient des balises HTML, l'ajouter directement
         if line.strip().startswith('<') and line.strip().endswith('>'):
             if current_paragraph:
-                # Terminer le paragraphe en cours s'il existe
                 html_lines.append('<p>')
                 for i, p_line in enumerate(current_paragraph):
+                    p_line = convert_bold_emphasis(p_line)  # Convertir le gras/italique
                     html_lines.append(p_line)
                     if i < len(current_paragraph) - 1:
                         html_lines.append('<br/>')
@@ -95,22 +112,21 @@ def convert_paragraphs(markdown_text):
             html_lines.append(line)
         elif line.strip() == '':
             if current_paragraph:
-                # Terminer le paragraphe en cours
                 html_lines.append('<p>')
                 for i, p_line in enumerate(current_paragraph):
+                    p_line = convert_bold_emphasis(p_line)  # Convertir le gras/italique
                     html_lines.append(p_line)
                     if i < len(current_paragraph) - 1:
                         html_lines.append('<br/>')
                 html_lines.append('</p>')
                 current_paragraph = []
         else:
-            # Ajouter la ligne au paragraphe en cours
             current_paragraph.append(line.strip())
 
-    # Gérer le dernier paragraphe s'il existe
     if current_paragraph:
         html_lines.append('<p>')
         for i, p_line in enumerate(current_paragraph):
+            p_line = convert_bold_emphasis(p_line)  # Convertir le gras/italique
             html_lines.append(p_line)
             if i < len(current_paragraph) - 1:
                 html_lines.append('<br/>')
